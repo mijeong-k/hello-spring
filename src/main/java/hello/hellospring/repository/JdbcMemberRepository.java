@@ -21,12 +21,6 @@ public class JdbcMemberRepository implements MemberRepository{
     public Member save(Member member) {
         String sql = "insert into member(name) values(?)";
 
-//        Connection conn = dataSource.getConnection();
-//        PreparedStatement pstmt = conn.prepareStatement(sql);
-//        pstmt.setString(1, member.getName());
-//
-//        pstmt.executeUpdate();
-
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -38,7 +32,7 @@ public class JdbcMemberRepository implements MemberRepository{
             pstmt.executeUpdate();
             rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
-                member.setId(rs.getLong(1));
+                member.setId(rs.getInt(1));
             } else {
                 throw new SQLException("id 조회 실패");
             }
@@ -46,16 +40,12 @@ public class JdbcMemberRepository implements MemberRepository{
         } catch (Exception e) {
             throw new IllegalStateException(e);
         } finally {
-            close(conn, pstmt, rs); }
+            close(conn, pstmt, rs);
         }
-
-
-
-        return null;
     }
 
     @Override
-    public Optional<Member> findById(Long id) {
+    public Optional<Member> findById(int id) {
         String sql = "select * from member where id = ?";
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -63,11 +53,11 @@ public class JdbcMemberRepository implements MemberRepository{
         try {
             conn = getConnection();
             pstmt = conn.prepareStatement(sql);
-            pstmt.setLong(1, id);
+            pstmt.setInt(1, id);
             rs = pstmt.executeQuery();
             if(rs.next()) {
                 Member member = new Member();
-                member.setId(rs.getLong("id"));
+                member.setId(rs.getInt("id"));
                 member.setName(rs.getString("name"));
                 return Optional.of(member);
             } else {
@@ -92,7 +82,7 @@ public class JdbcMemberRepository implements MemberRepository{
             pstmt.setString(1, name); rs = pstmt.executeQuery();
             if(rs.next()) {
                 Member member = new Member();
-                member.setId(rs.getLong("id"));
+                member.setId(rs.getInt("id"));
                 member.setName(rs.getString("name"));
                 return Optional.of(member);
             }
@@ -116,7 +106,7 @@ public class JdbcMemberRepository implements MemberRepository{
             List<Member> members = new ArrayList<>();
             while(rs.next()) {
                 Member member = new Member();
-                member.setId(rs.getLong("id"));
+                member.setId(rs.getInt("id"));
                 member.setName(rs.getString("name"));
                 members.add(member);
             }
