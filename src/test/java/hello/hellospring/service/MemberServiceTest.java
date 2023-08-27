@@ -38,7 +38,7 @@ class MemberServiceTest {
         member.setName("hello");
 
         //when 검증
-        int saveId = memberService.join(member);
+        Long saveId = memberService.join(member);
 
         //then 결과
         Member findMember = memberService.findOne(saveId).get();
